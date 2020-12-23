@@ -19,7 +19,9 @@ class UserController {
       const hash = hashPassword(password);
       const payload = { name, email, password: hash, role };
       const result = await User.create(payload);
-      res.status(201).json({ user: result.ops[0] });
+      const user = { ...result.ops[0] };
+      delete user.password;
+      res.status(201).json({ user });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });
@@ -58,7 +60,9 @@ class UserController {
     const payload = { name, email };
     try {
       const result = await User.findByIdAndUpdate(id, payload);
-      res.status(200).json({ user: result.value });
+      const user = { ...result.value };
+      delete user.password;
+      res.status(200).json({ user });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });
@@ -88,6 +92,7 @@ class UserController {
       if (user) {
         const match = comparePassword(password, user.password);
         if (match) {
+          delete user.password;
           res.status(200).json({ user });
         } else {
           throw createError(401, 'Wrong email / password');

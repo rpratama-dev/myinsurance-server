@@ -3,29 +3,31 @@ const config = require('../config/atlas');
 
 const { getDatabase } = config;
 
-const asurance = () => getDatabase('users');
+const user = () => getDatabase('users');
 
 const { ObjectId } = mongodb;
 
-class Assurance {
+class User {
   static find() {
-    return asurance().find({ password: 0 }).toArray();
+    return user()
+      .find({}, { projection: { password: 0 } })
+      .toArray();
   }
 
   static findByEmail(email) {
-    return asurance().findOne({ email });
+    return user().findOne({ email });
   }
 
   static findById(id) {
-    return asurance().findOne({ _id: ObjectId(id) }, { password: 0 });
+    return user().findOne({ _id: ObjectId(id) }, { projection: { password: 0 } });
   }
 
-  static create(newAssurance) {
-    return asurance().insertOne(newAssurance);
+  static create(newUser) {
+    return user().insertOne(newUser);
   }
 
   static findByIdAndUpdate(id, updatedData) {
-    return asurance().findOneAndUpdate(
+    return user().findOneAndUpdate(
       { _id: ObjectId(id) },
       { $set: updatedData },
       {
@@ -35,8 +37,8 @@ class Assurance {
   }
 
   static findByIdAndDelete(id) {
-    return asurance().deleteOne({ _id: ObjectId(id) });
+    return user().deleteOne({ _id: ObjectId(id) });
   }
 }
 
-module.exports = Assurance;
+module.exports = User;
