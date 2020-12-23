@@ -12,8 +12,30 @@ class Insurance {
     return insurance().find().toArray();
   }
 
+  // static findById(id) {
+  //   return insurance().findOne({ _id: ObjectId(id) });
+  // }
+
   static findById(id) {
-    return insurance().findOne({ _id: ObjectId(id) });
+    console.log('id', id);
+    return insurance()
+      .aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: 'email',
+            as: 'orderdetails',
+          },
+        },
+        { $match: { _id: ObjectId(id) } },
+      ])
+      .toArray();
+  }
+
+  static findByCustome() {
+    return insurance().findOne({ 'user.email': 'lia@mail.com' });
+    // .toArray();
   }
 
   static create(newInsurance) {

@@ -1,14 +1,25 @@
-const { generateInvoice } = require('../helper/generateInvoiceNumber');
+const { generateInvoice } = require('../helper/generateNumber');
 const Insurance = require('../model/Insurance');
 const Occupation = require('../model/Occupation');
-const Invoice = require('../model/Invoice');
+// const User = require('../model/User');
 
 class InsuranceController {
   static async index(req, res, next) {
     try {
       const result = await Insurance.find();
-      res.status(200).json({ policies: result });
+      res.status(200).json({ insurance: result });
     } catch (error) {
+      res.status(400).json({ error });
+    }
+  }
+
+  static async show(req, res) {
+    const { id } = req.params;
+    try {
+      const result = await Insurance.findById(id);
+      res.status(200).json({ insurance: result });
+    } catch (error) {
+      console.error(error);
       res.status(400).json({ error });
     }
   }
@@ -16,8 +27,8 @@ class InsuranceController {
   static async create(req, res, next) {
     try {
       const {
-        period,
         OccupationId,
+        period,
         price_object,
         construction,
         address,
@@ -28,41 +39,43 @@ class InsuranceController {
         earthquake,
       } = req.body;
 
+      const premi = await Occupation.findById(OccupationId);
+      // const user = await User.findById('5fe3795533541d3cb096b6e2');
+
+      const insuranceData = await Insurance.find();
+
+      // Cek Premi
+      const { rate } = premi;
+      const base_premi = ((price_object * rate) / 1000) * period;
+
       const payload = {
+        user_id: '5fe3795533541d3cb096b6e2',
+        occupation: premi,
+        invoice: {
+          invoice_number: generateInvoice(insuranceData),
+          base_premi,
+          is_paid: false,
+        },
+        policy: {
+          policy_number: null,
+          policy_type: 'Kebakaran',
+        },
         period,
-        OccupationId,
         price_object,
         construction,
-        address,
-        province,
-        city,
-        districts,
-        area,
+        addresses: {
+          address,
+          province,
+          city,
+          districts,
+          area,
+        },
         earthquake,
         is_approved: false,
       };
 
-      const premi = await Occupation.findById(OccupationId);
-      const invoiceData = await Invoice.find();
-      const result = await Insurance.create(payload);
-      const insurance = { ...result.ops[0] };
-      /* eslint no-underscore-dangle: 0 */
-      const InsuranceId = insurance._id;
-
-      // Cek Premi
-      const { rate, admin_fee } = premi;
-      const base_premi = ((price_object * rate) / 1000) * period;
-      // const total = base_premi + admin_fee;
-      const invoicePayload = {
-        invoice_number: generateInvoice(invoiceData),
-        InsuranceId,
-        base_premi,
-        admin_fee,
-        status: 'Belum Dibayar',
-      };
-
-      const invoice = await Invoice.create(invoicePayload);
-      res.status(201).json({ invoice: invoice.ops[0], insurance });
+      const insurance = await Insurance.create(payload);
+      res.status(201).json({ insurance: insurance.ops[0] });
     } catch (error) {
       res.status(400).json({ error });
       console.error(error);
@@ -73,7 +86,7 @@ class InsuranceController {
     try {
       const { period, OccupationId, price_object } = req.body;
       const premi = await Occupation.findById(OccupationId);
-      const invoiceData = await Invoice.find();
+      const insuranceData = await Insurance.find();
 
       // Cek Premi
       const { rate, admin_fee } = premi;
@@ -84,13 +97,46 @@ class InsuranceController {
         base_premi,
         admin_fee,
         totalPremi,
-        invoice_number: generateInvoice(invoiceData),
+        invoice_number: generateInvoice(insuranceData),
       };
 
       res.status(201).json({ insurance: payload });
     } catch (error) {
       console.error(error);
     }
+  }
+
+  static async approveInsurance(req, res) {
+    const { id } = req.params;
+    const { is_approved } = req.body;
+    try {
+      const insuranceData = await Insurance.findById(id);
+      insuranceData.invoice.is_paid = is_approved;
+      insuranceData.policy.policy_number = is_approved
+        ? `K.01.${insuranceData.invoice.invoice_number.slice(2)}`
+        : null;
+
+      insuranceData.is_approved = is_approved;
+
+      const result = await Insurance.findByIdAndUpdate(id, insuranceData);
+      res.status(200).json({ insurance: result.value });
+
+      // const sorting
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ error });
+    }
+  }
+
+  static async customSearch(req, res) {
+    const option = { user: { email: 'moulia@mail.com' } };
+    try {
+      const result = await Insurance.findByCustome(option);
+      res.status(200).json({ insurance: result });
+    } catch (error) {
+      console.error(error);
+    }
+    // { size: { h: 14, w: 21, uom: 'cm' } }
   }
 }
 
