@@ -12,8 +12,37 @@ class Invoice {
     return invoice().find().toArray();
   }
 
+  static finda() {
+    return invoice()
+      .aggregate([
+        {
+          $lookup: {
+            from: 'insurance',
+            foreignField: '_id',
+            localField: 'InsuranceId',
+            as: 'insurance',
+          },
+        },
+        { $match: {} },
+      ])
+      .toArray();
+  }
+
   static findById(id) {
-    return invoice().findOne({ _id: ObjectId(id) });
+    return invoice()
+      .aggregate([
+        {
+          $lookup: {
+            from: 'insurance',
+            foreignField: '_id',
+            localField: 'InsuranceId',
+            as: 'insurance',
+          },
+        },
+        { $match: { _id: ObjectId(id) } },
+      ])
+      .toArray();
+    // return invoice().findOne({ _id: ObjectId(id) });
   }
 
   static create(newInvoice) {

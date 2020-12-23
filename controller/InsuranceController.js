@@ -39,6 +39,7 @@ class InsuranceController {
         districts,
         area,
         earthquake,
+        is_approved: false,
       };
 
       const premi = await Occupation.findById(OccupationId);

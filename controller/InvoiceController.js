@@ -3,7 +3,7 @@ const Invoice = require('../model/Invoice');
 class InvoiceController {
   static async index(req, res) {
     try {
-      const result = await Invoice.find();
+      const result = await Invoice.finda();
       res.status(200).json({ invoices: result });
     } catch (error) {
       res.status(400).json({ error: error.message });
