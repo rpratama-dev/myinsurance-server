@@ -60,7 +60,7 @@ class InsuranceController {
         status: 'Belum Dibayar',
       };
 
-      const invoice = await Insurance.create(invoicePayload);
+      const invoice = await Invoice.create(invoicePayload);
       res.status(201).json({ invoice: invoice.ops[0], insurance });
     } catch (error) {
       res.status(400).json({ error });
