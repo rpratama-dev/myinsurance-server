@@ -9,7 +9,25 @@ const { ObjectId } = mongodb;
 
 class Insurance {
   static find() {
-    return insurance().find().toArray();
+    return insurance()
+      .aggregate([
+        {
+          $lookup: {
+            let: {
+              userObjId: {
+                $toObjectId: '$user_id',
+              },
+            },
+            from: 'users',
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userObjId'] } } },
+              { $project: { password: 0 } },
+            ],
+            as: 'user',
+          },
+        },
+      ])
+      .toArray();
   }
 
   // static findById(id) {
@@ -22,10 +40,14 @@ class Insurance {
       .aggregate([
         {
           $lookup: {
+            let: {
+              userObjId: {
+                $toObjectId: '$user_id',
+              },
+            },
             from: 'users',
-            localField: 'user_id',
-            foreignField: 'email',
-            as: 'orderdetails',
+            pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$userObjId'] } } }],
+            as: 'userDetails',
           },
         },
         { $match: { _id: ObjectId(id) } },
