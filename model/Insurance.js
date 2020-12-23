@@ -46,8 +46,11 @@ class Insurance {
               },
             },
             from: 'users',
-            pipeline: [{ $match: { $expr: { $eq: ['$_id', '$$userObjId'] } } }],
-            as: 'userDetails',
+            pipeline: [
+              { $match: { $expr: { $eq: ['$_id', '$$userObjId'] } } },
+              { $project: { password: 0 } },
+            ],
+            as: 'user',
           },
         },
         { $match: { _id: ObjectId(id) } },

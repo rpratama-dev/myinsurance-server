@@ -110,16 +110,18 @@ class InsuranceController {
     const { id } = req.params;
     const { is_approved } = req.body;
     try {
-      const insuranceData = await Insurance.findById(id);
+      const raw = await Insurance.findById(id);
+      const insuranceData = { ...raw[0] };
       insuranceData.invoice.is_paid = is_approved;
       insuranceData.policy.policy_number = is_approved
         ? `K.01.${insuranceData.invoice.invoice_number.slice(2)}`
         : null;
-
       insuranceData.is_approved = is_approved;
+      const payload = { ...insuranceData };
+      delete payload.user;
 
-      const result = await Insurance.findByIdAndUpdate(id, insuranceData);
-      res.status(200).json({ insurance: result.value });
+      await Insurance.findByIdAndUpdate(id, payload);
+      res.status(200).json({ insurance: insuranceData });
 
       // const sorting
     } catch (error) {
