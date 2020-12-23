@@ -1,3 +1,5 @@
+const createError = require('http-errors');
+const { hashPassword, comparePassword } = require('../helper/bcrypt');
 const User = require('../model/User');
 
 class UserController {
@@ -14,7 +16,8 @@ class UserController {
     try {
       const { name, email, password } = req.body;
       const role = 'Admin';
-      const payload = { name, email, password, role };
+      const hash = hashPassword(password);
+      const payload = { name, email, password: hash, role };
       const result = await User.create(payload);
       res.status(201).json({ user: result.ops[0] });
     } catch (error) {
@@ -27,7 +30,8 @@ class UserController {
     try {
       const { name, email, password } = req.body;
       const role = 'Customer';
-      const payload = { name, email, password, role };
+      const hash = hashPassword(password);
+      const payload = { name, email, password: hash, role };
       const result = await User.create(payload);
       res.status(201).json({ user: result.ops[0] });
     } catch (error) {
@@ -50,8 +54,8 @@ class UserController {
 
   static async update(req, res) {
     const { id } = req.params;
-    const { type, rate } = req.body;
-    const payload = { type: type.toLowerCase(), rate };
+    const { name, email } = req.body;
+    const payload = { name, email };
     try {
       const result = await User.findByIdAndUpdate(id, payload);
       res.status(200).json({ user: result.value });
@@ -77,12 +81,20 @@ class UserController {
     }
   }
 
-  static async loginCustomer(req, res) {
+  static async login(req, res) {
     try {
-      const { type, rate } = req.body;
-      const payload = { type: type.toLowerCase(), rate };
-      const result = await User.create(payload);
-      res.status(201).json({ user: result.ops[0] });
+      const { email, password } = req.body;
+      const user = await User.findByEmail(email);
+      if (user) {
+        const match = comparePassword(password, user.password);
+        if (match) {
+          res.status(200).json({ user });
+        } else {
+          throw createError(401, 'Wrong email / password');
+        }
+      } else {
+        throw createError(401, 'Wrong email / password');
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });

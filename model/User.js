@@ -12,6 +12,10 @@ class Assurance {
     return asurance().find({ password: 0 }).toArray();
   }
 
+  static findByEmail(email) {
+    return asurance().findOne({ email });
+  }
+
   static findById(id) {
     return asurance().findOne({ _id: ObjectId(id) }, { password: 0 });
   }
