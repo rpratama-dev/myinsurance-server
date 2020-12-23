@@ -35,7 +35,9 @@ class UserController {
       const hash = hashPassword(password);
       const payload = { name, email, password: hash, role };
       const result = await User.create(payload);
-      res.status(201).json({ user: result.ops[0] });
+      const user = { ...result.ops[0] };
+      delete user.password;
+      res.status(201).json({ user });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });

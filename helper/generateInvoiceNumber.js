@@ -1,6 +1,6 @@
-function generateInvoice(policy) {
+function generateInvoice(invoice) {
   // Get last invoice number
-  const lastInvoiceNUmber = policy.length > 0 ? policy[policy.length - 1].invoiceNumber : null;
+  const lastInvoiceNUmber = invoice.length > 0 ? invoice[invoice.length - 1].invoice_number : null;
   const temp = lastInvoiceNUmber ? lastInvoiceNUmber.split('.') : null;
 
   // Create Cutome Invoice Number

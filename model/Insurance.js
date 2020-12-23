@@ -3,25 +3,25 @@ const config = require('../config/atlas');
 
 const { getDatabase } = config;
 
-const asurance = () => getDatabase('insurance');
+const insurance = () => getDatabase('insurance');
 
 const { ObjectId } = mongodb;
 
 class Insurance {
   static find() {
-    return asurance().find().toArray();
+    return insurance().find().toArray();
   }
 
   static findById(id) {
-    return asurance().findOne({ _id: ObjectId(id) });
+    return insurance().findOne({ _id: ObjectId(id) });
   }
 
   static create(newInsurance) {
-    return asurance().insertOne(newInsurance);
+    return insurance().insertOne(newInsurance);
   }
 
   static findByIdAndUpdate(id, updatedData) {
-    return asurance().findOneAndUpdate(
+    return insurance().findOneAndUpdate(
       { _id: ObjectId(id) },
       { $set: updatedData },
       {
@@ -31,7 +31,7 @@ class Insurance {
   }
 
   static findByIdAndDelete(id) {
-    return asurance().deleteOne({ _id: ObjectId(id) });
+    return insurance().deleteOne({ _id: ObjectId(id) });
   }
 }
 

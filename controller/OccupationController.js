@@ -12,8 +12,8 @@ class OccupationController {
 
   static async create(req, res) {
     try {
-      const { type, rate } = req.body;
-      const payload = { type: type.toLowerCase(), rate };
+      const { type, rate, admin_fee } = req.body;
+      const payload = { type: type.toLowerCase(), rate, admin_fee };
       const result = await Occupation.create(payload);
       res.status(201).json({ occupation: result.ops[0] });
     } catch (error) {
@@ -35,8 +35,8 @@ class OccupationController {
 
   static async update(req, res) {
     const { id } = req.params;
-    const { type, rate } = req.body;
-    const payload = { type: type.toLowerCase(), rate };
+    const { type, rate, admin_fee } = req.body;
+    const payload = { type: type.toLowerCase(), rate, admin_fee };
     try {
       const result = await Occupation.findByIdAndUpdate(id, payload);
       res.status(200).json({ occupation: result.value });
