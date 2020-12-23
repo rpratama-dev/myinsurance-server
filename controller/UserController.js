@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const { hashPassword, comparePassword } = require('../helper/bcrypt');
+const { signToken } = require('../helper/jwt');
 const User = require('../model/User');
 
 class UserController {
@@ -95,6 +96,12 @@ class UserController {
         const match = comparePassword(password, user.password);
         if (match) {
           delete user.password;
+          const token = signToken({
+            _id: user._id,
+            email: user.email,
+            name: user.name,
+          });
+          user.access_token = token;
           res.status(200).json({ user });
         } else {
           throw createError(401, 'Wrong email / password');

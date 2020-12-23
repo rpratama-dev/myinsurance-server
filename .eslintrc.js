@@ -19,6 +19,7 @@ module.exports = {
     // ecmaFe123
   },
   rules: {
+    'no-underscore-dangle': 0,
     'no-console': 0,
     quotes: [1, 'single'],
     'linebreak-style': [1, 'unix'],

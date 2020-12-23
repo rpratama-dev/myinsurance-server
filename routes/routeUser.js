@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const UserController = require('../controller/UserController');
+const { authAdmin, authentication } = require('../middleware/auth');
 
-router.get('/', UserController.index);
+router.get('/', authentication, UserController.index);
 router.post('/admin', UserController.createAdmin);
 router.post('/customer', UserController.createCustomer);
 router.post('/login', UserController.login);
-router.get('/:id', UserController.show);
-router.put('/:id', UserController.update);
-router.delete('/:id', UserController.destroy);
+router.get('/:id', authentication, UserController.show);
+router.put('/:id', authentication, UserController.update);
+router.delete('/:id', authAdmin, UserController.destroy);
 
 module.exports = router;
