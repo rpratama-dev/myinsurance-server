@@ -1,10 +1,10 @@
 const { generateInvoice } = require('../helper/generateInvoiceNumber');
-const Assurance = require('../model/assurance');
+const Insurance = require('../model/Insurance');
 
-class AssuranceController {
+class InsuranceController {
   static async index(req, res, next) {
     try {
-      const result = await Assurance.find();
+      const result = await Insurance.find();
       res.status(200).json({ policies: result });
     } catch (error) {
       res.status(400).json({ error });
@@ -47,7 +47,7 @@ class AssuranceController {
         invoiceNumber,
       };
 
-      const result = await Assurance.create(payload);
+      const result = await Insurance.create(payload);
       res.status(201).json({ response: result.ops[0] });
     } catch (error) {
       res.status(400).json({ error });
@@ -57,7 +57,7 @@ class AssuranceController {
 
   static async checkPremi(req, res, next) {
     try {
-      const result = await Assurance.find();
+      const result = await Insurance.find();
 
       const { period, okupasi, harga_bangunan } = req.body;
       const rate = { rumah: 0.3875, ruko: 0.5 };
@@ -81,4 +81,4 @@ class AssuranceController {
   }
 }
 
-module.exports = AssuranceController;
+module.exports = InsuranceController;

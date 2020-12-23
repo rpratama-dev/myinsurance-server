@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const AssuranceController = require('../controller/AssuranceController');
+const AssuranceController = require('../controller/InsuranceController');
 
 router.get('/', AssuranceController.index);
 router.post('/', AssuranceController.create);

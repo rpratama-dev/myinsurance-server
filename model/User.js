@@ -3,17 +3,17 @@ const config = require('../config/atlas');
 
 const { getDatabase } = config;
 
-const asurance = () => getDatabase('asurance');
+const asurance = () => getDatabase('users');
 
 const { ObjectId } = mongodb;
 
 class Assurance {
   static find() {
-    return asurance().find().toArray();
+    return asurance().find({ password: 0 }).toArray();
   }
 
   static findById(id) {
-    return asurance().findOne({ _id: ObjectId(id) });
+    return asurance().findOne({ _id: ObjectId(id) }, { password: 0 });
   }
 
   static create(newAssurance) {
