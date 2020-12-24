@@ -54,11 +54,11 @@ class OccupationController {
       if (result.deletedCount < 1) {
         res.status(404).json({ response: 'Occupation ID Not found!' });
       } else {
-        res.status(200).json({ occupation: 'Occupation deleted!' });
+        res.status(200).json({ response: 'Occupation deleted!' });
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ response: error.message });
     }
   }
 }
