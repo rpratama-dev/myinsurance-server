@@ -35,16 +35,19 @@ async function authAdmin(req, res, next) {
 }
 
 async function authCustomer(req, res, next) {
-  const { role } = req.userLogedIn ? req.userLogedIn : { role: null };
+  const { role, _id } = req.userLogedIn ? req.userLogedIn : { role: null, _id: null };
   const { id } = req.params;
-  const { _id } = req.userLogedIn;
   try {
     console.log(_id, typeof String(_id), typeof id);
     if (role === 'Customer') {
-      if (String(_id) === id) {
-        next();
+      if (id) {
+        if (String(_id) === id) {
+          next();
+        } else {
+          throw createError(401, _id);
+        }
       } else {
-        throw createError(401, _id);
+        next();
       }
     } else {
       throw createError(401, _id);

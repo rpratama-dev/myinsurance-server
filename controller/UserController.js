@@ -88,7 +88,7 @@ class UserController {
     }
   }
 
-  static async login(req, res) {
+  static async login(req, res, next) {
     try {
       const { email, password } = req.body;
       const user = await User.findByEmail(email);
@@ -111,7 +111,8 @@ class UserController {
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: error.message });
+      next(error);
+      // res.status(500).json({ error: error.message });
     }
   }
 }

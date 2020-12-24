@@ -34,11 +34,11 @@ class InsuranceController {
         address,
         province,
         city,
-        districts,
         area,
         earthquake,
       } = req.body;
-
+      const { _id } = req.userLogedIn;
+      // console.log(OccupationId);
       const premi = await Occupation.findById(OccupationId);
       // const user = await User.findById('5fe3795533541d3cb096b6e2');
 
@@ -49,7 +49,7 @@ class InsuranceController {
       const base_premi = ((price_object * rate) / 1000) * period;
 
       const payload = {
-        user_id: '5fe3795533541d3cb096b6e2',
+        user_id: String(_id),
         occupation: premi,
         invoice: {
           invoice_number: generateInvoice(insuranceData),
@@ -67,10 +67,11 @@ class InsuranceController {
           address,
           province,
           city,
-          districts,
           area,
         },
-        earthquake,
+        expansion: {
+          earthquake,
+        },
         is_approved: false,
       };
 
@@ -87,9 +88,8 @@ class InsuranceController {
       const { period, OccupationId, price_object } = req.body;
       const premi = await Occupation.findById(OccupationId);
       const insuranceData = await Insurance.find();
-
       // Cek Premi
-      const { rate, admin_fee } = premi;
+      const { rate, admin_fee, type } = premi;
       const base_premi = ((price_object * rate) / 1000) * period;
       const totalPremi = base_premi + admin_fee;
       const payload = {
@@ -97,10 +97,13 @@ class InsuranceController {
         base_premi,
         admin_fee,
         totalPremi,
+        occupation: type,
+        policy_type: 'Kebakaran',
         invoice_number: generateInvoice(insuranceData),
       };
 
-      res.status(201).json({ insurance: payload });
+      console.log('payload', payload);
+      res.status(200).json({ insurance: payload });
     } catch (error) {
       console.error(error);
     }
