@@ -4,8 +4,6 @@ function errorHandler(err, req, res, next) {
   const response = err.message || 'Internal Server Error';
   console.log('status', status, response);
   res.status(status).json({ status, response });
-
-  res.status(err.status).json({ message: err.message });
 }
 
 module.exports = errorHandler;
