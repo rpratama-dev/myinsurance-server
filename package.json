@@ -15,5 +15,24 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.0",
     "prettier": "^2.2.1"
-  }
+  },
+  "name": "myinsurance",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpratama-dev/myinsurance-server.git"
+  },
+  "author": "rpratama94 <rpratama.sky@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "bugs": {
+    "url": "https://github.com/rpratama-dev/myinsurance-server/issues"
+  },
+  "homepage": "https://github.com/rpratama-dev/myinsurance-server#readme",
+  "keywords": [],
+  "description": ""
 }

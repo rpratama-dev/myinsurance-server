@@ -5,7 +5,7 @@ const router = require('./routes');
 const { connect } = require('./config/atlas');
 const errorHandler = require('./middleware/errorHandler');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 connect((err) => {
   if (err) return console.log(err);
